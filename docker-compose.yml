@@ -1,0 +1,94 @@
+services:
+
+  webserver:
+    build:
+      context: ./chatroom-frontend
+    depends_on:
+      - django
+    environment:
+      - DJ_HOST=${DJ_HOST}
+      - DJ_PORT=${DJ_PORT}
+      - DOMAIN=${DOMAIN}
+    ports:
+      - "80:8000"
+      - "443:443" 
+    networks:
+      - frontend
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    init: true
+    restart: unless-stopped
+    stop_grace_period: 1.5s
+
+  django:
+    build:
+      context: ./chatroom
+      target: production
+    environment:
+      # - SECRET_KEY=${SECRET_KEY} # production
+
+      - DB_HOST=${DB_HOST}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_STORAGE_BUCKET_NAME=${AWS_STORAGE_BUCKET_NAME}
+      - AWS_S3_REGION_NAME=${AWS_S3_REGION_NAME}
+      
+      - DJANGO_SUPERUSER_USERNAME=${SUPER_USER_NAME}
+      - DJANGO_SUPERUSER_PASSWORD=${SUPER_USER_PASSWORD}
+      - DJANGO_SUPERUSER_EMAIL=${SUPER_USER_EMAIL}
+
+      - DJANGO_CORS_ORIGINS=${DJANGO_CORS_ORIGINS}
+      - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
+    ports:
+      - "8080:8080"
+    depends_on:
+      redis:
+        condition: service_started
+    networks:
+      - frontend
+      - backend
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    init: true
+    restart: unless-stopped
+
+  redis:
+    image: redis:7.4.1-alpine3.20
+    expose:
+      - 6379
+    networks:
+      - backend
+    init: true
+    restart: unless-stopped
+
+  postgresdb:
+    image: postgres:14.15-alpine3.21
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    expose:
+      - 5432
+    networks:
+      - backend
+    init: true
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+
+networks:
+  backend:
+  frontend:
