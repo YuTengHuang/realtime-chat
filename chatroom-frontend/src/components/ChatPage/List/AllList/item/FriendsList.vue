@@ -5,7 +5,7 @@ import { computed } from 'vue'
 
 const globalStore = useGlobalStore()
 const { friendsList, openChatRoom, openInfo, userInfo, openList } = storeToRefs(globalStore)
-const { GetOrCreatePersonalRoom } = globalStore
+const { GetOrCreatePersonalRoom, GetAllMessage } = globalStore
 
 const props = defineProps(['filterList'])
 
@@ -16,6 +16,7 @@ const HandleOpenChat = async (userId) => {
     openChatRoom.value.open = true
   }
   openChatRoom.value.data = room
+  GetAllMessage(room.id)
   openList.value = false
 }
 
