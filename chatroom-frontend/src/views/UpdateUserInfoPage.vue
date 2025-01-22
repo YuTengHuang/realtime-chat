@@ -171,12 +171,11 @@ onMounted(() => {
               @change="PreviewImg"
             />
             <p
-              class="remove-avatar"
+              :class="['remove-avatar', { disabled: inputData.IsDefault === 'true' }]"
               @click="HandleRemoveAvatar"
               v-if="
                 userData.avatar !== 'https://vuedjangochats3.s3.amazonaws.com/avatar/default.svg'
               "
-              :disabled="inputData.IsDefault === 'true'"
             >
               移除頭像
             </p>
@@ -355,7 +354,7 @@ onMounted(() => {
             background-color: transparent;
             cursor: pointer;
 
-            &:disabled {
+            &.disabled {
               cursor: not-allowed;
             }
 
