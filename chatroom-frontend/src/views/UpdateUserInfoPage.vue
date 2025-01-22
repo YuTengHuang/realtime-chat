@@ -90,6 +90,7 @@ const HandleUpdateUserInfo = () => {
 }
 
 const HandleRemoveAvatar = () => {
+  if (user.value.is_default === 'true') return
   RemoveAvatarToast(() => RemoveAvatar())
 }
 
@@ -175,6 +176,7 @@ onMounted(() => {
               v-if="
                 userData.avatar !== 'https://vuedjangochats3.s3.amazonaws.com/avatar/default.svg'
               "
+              :disabled="inputData.IsDefault === 'true'"
             >
               移除頭像
             </p>
@@ -352,6 +354,10 @@ onMounted(() => {
             font-size: 1.2rem;
             background-color: transparent;
             cursor: pointer;
+
+            &:disabled {
+              cursor: not-allowed;
+            }
 
             &::after {
               content: '';
