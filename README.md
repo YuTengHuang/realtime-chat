@@ -3,9 +3,6 @@
 ![image](/images/realtime2.png)
 
 
-## Live Demo
-- [Demo](https://ytcustom.sytes.net/)
-
 ## 簡介
 這是一個基於 Vue.js 、 Django 的即時聊天室，透過 Websokcet API 連線並結合 Django Channels 實現即時的互動功能。支援私人聊天、群組討論及圖片上傳。
 
